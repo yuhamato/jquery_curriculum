@@ -15,6 +15,26 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        var list = '';  //外側で定義してHTML要素の書き換えを可能にする
+        $.ajax({  //Ajax
+          type: 'GET',  //今回は取得しているからGET
+          url: './data.json',//ソース
+          dataType: 'json',//データの種類
+        }).done(function(data){ //通信成功した時の処理  //data.jsonのデータがdataへ代入
+          $.each(data.colorsArray, function colorListApp(index,value){ //dataのcolorsArrayという配列に対し
+            // console.log(this);
+            // list += '<li class="colorList__item">' + '<p class="colorList__title" style=background-color:' + $(this)[0].hexValue + ';>' + $(this)[0].colorName + '</p>' + '</li>';  //はじめに定義したlist変数に、追加したい内容を回数分入れていく。thisは、data.colorsArrayの中身を０から繰り返す。
+            list += '<li class="colorList__item">' + '<p class="colorList__title" style=background-color:' + value.hexValue + ';>' + value.colorName + '</p>' + '</li>';  //関数に引数の設定をしていれば、このような指定でもできる。（第２引数に情報が入っている）
+            // $('.colorList').append('<li class="colorList__item">' + '<p class="colorList__title" style=background-color:' + $(this)[0].hexValue + ';>' + $(this)[0].colorName + '</p>' + '</li>');  //これでもできるが一回一回htmlへ要素の追加をしている。
+          });
+          $('.colorList').html(list); //eachが終わった後、listの中身を一気にhtml要素へ追加。
+          // $('.colorList').append(list);//これでもできる。。。
+          console.log(data);
+        });
+        
+
+      });
       // [使うメソッド]
       // $.each(配列, function functionName() {}) 配列に対しての繰り返し処理
       // .html() 要素の中に引数を代入する。（まずは.append() でやってみましょう）

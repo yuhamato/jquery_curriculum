@@ -26,6 +26,88 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        var pageNum = 0;  //ページを数える変数
+        var prev = '';  //前の検索ワードを格納する変数
+        var hitsCount = 0;  //表示している本のcount
+
+        $('#js-search-button').on('click', function() { //ボタンがクリックされた時  対象要素.on( イベント名, セレクタ, データ ,関数 )
+          var keyword = $('#js-search-word').val();  //変数に検索する値を代入
+          $('.message').remove(); //エラーメッセージの表示をリセットする
+          if(prev != keyword){  //前検索ワードが違う場合
+            $('.lists').empty();  //検索ワードが変わった時、前回の検索結果の削除。empty()は指定した親は削除されず、その中の子が削除。
+            pageNum = 0; //ページのリセット
+            hitsCount = 0;
+            prev = keyword; //検索ワードが同じか比較するために検索したワードをprevへ格納しておく
+          }
+          pageNum += 1;  //ページ追加
+          console.log(pageNum);
+
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',
+            dataType: 'json',
+            data: { //dataに入れる意味は、詳細な中身の指定の為。
+              applicationId: '1019399324990976605',
+              booksGenreId: '001',
+              keyword: keyword, //検索ワード
+              page: pageNum, //ページ これでは、20件／１ページ
+              hits: 20, //検索した表示件数20件
+            },
+          })
+          .done(function(data) {  //.doneとは通信成功処理。　引数のdataへ検索結果が返ってくる
+            done(data); //個別で書いたdone関数でdataが使えるように引数の引き渡し
+            console.log(data);
+          })
+          .fail(function(jqXHR){ //.failは通信失敗時の処理。（jqXHR, textStatus, errorThrown）第１引数にエラー内容がはいるので今回は第１引数のみ
+            //jqXHR HTTPリクエストのステータスが取得できます
+            //textStatus タイムアウト、パースエラー（構文エラー）などのエラー情報が取得できます
+  1         //errorThrown 例外情報が取得できます
+            fail(jqXHR);
+            console.log(jqXHR);
+          });
+        });
+
+        function done(data) { //関数化
+          if(data.hits > 0){  //hitsが０より大きければ
+            var bookList =''; //ここで定義すれば２回目の検索の場合のリセットがかかる
+            hitsCount += data.hits; //ここで表示されている本の数のCount
+            $('.lists').before('<div class="message">検索結果 '+hitsCount+' / '+data.count+' 件'); //beforeでlistsの前に要素の追加
+            
+            $.each(data.Items, function(index,value){ //dataの配列中身のItemsの使用　第一引数に本のindex、第２引数に本の情報が入る（value）
+              bookList += '<li class="lists__item">'+
+                            '<div class="lists__item__inner">'+
+                              '<a href="'+value.Item.itemUrl+'" class="lists__item__link" target="_blank">'+ //第２引数のvalueの中のItemの中のitemUrl
+                                '<img src="'+value.Item.largeImageUrl+'" class="lists__item__img" alt="">'+
+                                '<p class="lists__item__detail">作品名：'+value.Item.title + '</p>'+
+                                '<p class="lists__item__detail">作者　：'+value.Item.author + '</p>'+
+                                '<p class="lists__item__detail">出版社：'+value.Item.publisherName+'</p>'+
+                              '</a>'+
+                            '</div>'+
+                          '</li>';
+            });
+            $('.lists').prepend(bookList); //prependで要素の先頭に追加。
+          }else{
+            $('.lists').before('<div class="message">検索結果が見つかりませんでした。<br>別のキーワードで検索して下さい。') //beforeでlistsの前に要素の追加
+          }
+        };
+
+        function fail(jqXHR){
+          pageNum -= 1; //ここでマイナス１をしないとエラーがでてもページが進んでしまう
+          console.log(pageNum);
+          if(jqXHR.status == 400){
+            $('.lists').before('<div class="message">検索ワードの指定がない or 検索ワードが半角英数字1文字です。<br>2文字以上入力して検索して下さい。'); //beforeでlistsの前に要素の追加
+          }else if(jqXHR.status == 429){
+            $('.lists').before('<div class="message">連続で検索している為、<br>少し時間をおいて検索して下さい。'); //beforeでlistsの前に要素の追加
+          }else if(jqXHR.status == 500){
+            $('.lists').before('<div class="message">システムエラー。'); //beforeでlistsの前に要素の追加
+          }else if(jqXHR.status == 503){
+            $('.lists').before('<div class="message">メンテナンス。'); //beforeでlistsの前に要素の追加
+          }else if(jqXHR.status == 0){
+            $('.lists').before('<div class="message">インターネットに接続されていません。<br>インターネットに接続されているか確認して下さい。'); //beforeでlistsの前に要素の追加
+          }
+        };
+      });
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //

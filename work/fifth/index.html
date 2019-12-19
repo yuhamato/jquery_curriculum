@@ -84,6 +84,24 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        $('.select').change(function(){ // .change()でセレクトが変更されたことを取得  この場合セレクタの選ぶところが変更されたことを感知
+          var value = $(this).val(); // .val()でvalueの中身を取得
+          if(value == 'all'){ //変更されたのがallだったら
+            $('.list li').each(function(){  //eachで一つずつ対象の要素の数だけ繰り返し処理する（ul.listの中のliを一つずつ）
+              $(this).show();
+            });
+          }else{
+            $('.list li').each(function(){
+              if(value == $(this).data('category-type')){ //変更されたものとliのdataが一致していれば、
+                $(this).show(); //表示
+              }else{
+                $(this).hide(); //非表示
+              }
+            });
+          }
+        });
+      });
       // 今回やるのはソート機能です。
       // selectボックスをクリックして言語を選び、その言語と関係のあるリストだけが表示されるプログラムです。
       // [処理の流れ]

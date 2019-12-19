@@ -26,6 +26,52 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        var imgPage =[];  //からの配列を用意
+        var num = 0; //配列に幅の情報をいれるための変数
+        var imgCount = $('.slider-list li').length; //配列に入れるimgの個数をカウント
+        var numPage = 0;  //画像をどれに移動させるかの変数（これでは０〜３の四つ）  今表示している画像
+
+        for (i=0; i<imgCount; i++){ //ここで配列にいれる
+          if(i==0){
+            imgPage.push(0);  //pushで配列へ格納  したのelseで-してから格納する為はじめの0はあらかじめ格納しておく
+          }else{
+            num += -$('.slider-list li').eq(i).width();  //移動するための幅の情報の取得  右のnextをクリックした際、画像が左へずれて（widthのマイナス方向）画像を表示させる為、-でないとだめ
+            imgPage.push(num);
+          }
+        }
+
+        $('.slider-ctrl-btn').click(function(){
+          if($(this).data('ctrl') == 'next'){ //もしもクリックしたのがnextだったら
+            if(numPage==imgCount -1){ //すでに最後の四枚目の画像が表示されていたら マイナス１をしているのはimgCountの中が４になっているため
+              numPage = 0;
+              $(".slider-list").animate({
+              left: imgPage[numPage]  //画像の位置をnumPage0へ
+              });
+            }else{  //で、なければ
+            numPage += 1; // numPage(今表示している画像)＋1で次の画像へ
+            $(".slider-list").animate({
+              left: imgPage[numPage]
+              });
+            }
+          }else if($(this).data('ctrl') == 'prev'){ //もしもクリックしたのがprevだったら
+            if(numPage==0){ //すでに最初の０枚目の画像が表示されていたら
+              numPage = imgCount - 1; //numPageをimgCount(配列の最後)にして
+              $(".slider-list").animate({
+              left: imgPage[numPage]
+              });
+            }else{
+              numPage -= 1;  //numPageからマイナス１をする（マイナス１で前側の画像へ）
+              $(".slider-list").animate({
+              left: imgPage[numPage]
+              });
+            }
+          }
+        });
+        console.log(imgCount);
+        console.log(imgPage);
+
+      });
       // 今回やるのはスライドショーです。
       // 右方向には右のボタンを押すと移動し、左方向には左のボタンを押すと移動する。また右端にいる状態で右のボタンを押すと最初の位置に戻り、 左端にいる状態で左のボタンを押すと最後の位置に移動する。data属性にprev,nextを記述してあるのでこちらを取得すると楽です。
       // 位置情報は配列に格納しておき、右のボタンをクリックするたびに配列の添字を1追加し、左のボタンをクリックすると配列の添字を1減らします。そうすることによって次の座標が取得できます。その座標にアニメーションさせるととても楽です。
@@ -34,6 +80,9 @@
       // .data() 要素のdata属性を取得します。
       // .width() 要素の幅を取得します。
       // .length 要素の個数を取得します。
+
+      // .eq()とは、複数のHTML要素の中からインデックス番号を指定することで特定の要素だけを取得できます。
+      // .push 配列データの末尾に任意の要素を追加する。
     </script>
   </body>
 </html>

@@ -113,7 +113,7 @@
       var targetNum = $(this).index();  //インデックスを取得
       console.log(targetNum);
       alert(targetNum);
-    })
+    });
 
 // 第8問  id='q8'の要素をhoverしたらlargeというクラスを付与し、hoverが外れたら、クラスを削除せよ。
     $('#q8').hover(function(){
@@ -124,14 +124,14 @@
 
 // 第9問  id='q9'の要素をクリックしたらこの要素に設定してあるdata属性をconsoleに表示せよ。
     $('#q9').click(function(){
-      var date = $(this).data('text');  //データテキストの取得
-      console.log(date);
-    })
+      var data = $(this).data('text');  //データテキストの取得
+      console.log(data);
+    });
 
 // 第10問 id='q10'の子要素をクリックしたら、その要素のインデックスと等しいid='q11'の子要素にlargeというクラスを追加せよ。
     $('#q10').find('li').click(function(){
       var num = $(this).index();
-      $('#q11').find('li').eq(num).addClass('large'); //eqは何番目か
+      $('#q11').find('li').eq(num).addClass('large'); //eqは何番目か(eqはイコールメソッド、これでいうとnumと等しい場所に)
     });
 
   });

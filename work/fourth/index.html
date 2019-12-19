@@ -47,6 +47,17 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+        $('.menu__list li').hover(function(){ //.menu__list liは、直下であるどちらかのli(menu__list__titleを囲ってるli)をホバーした時
+          // $('.menu__list__childList',this).stop().slideDown(); //これでもできた
+          // $(this).children('ul').stop().slideDown();  // .menu__list__childListどちらかのthisのchildren(直下の子要素であるul)menu__list__childListを指定してスライドダウン
+          $(this).children('p').next().stop().slideDown();  //nextを使ったパターン  thisの直下のpの次の要素（ulのこと）
+        }, function(){
+          // $('.menu__list__childList',this).stop().slideUp(); //これでもできた
+          // $(this).children('ul').stop().slideUp();
+          $(this).children('p').next().stop().slideUp();
+        });
+      });
       // 今回やるのはドロップメニューです。
       // メニューをhoverすると隠れている中のメニューが表示され、メニューから離れると中のメニューが非表示されるプログラムです。
       // [使用するメソッド]
@@ -54,8 +65,17 @@
       // .slideDown() 要素がスライドしながら表示されます。
       // .slideUp() 要素がスライドしながら非表示されます。
       // .next() 要素の隣の要素を取得します。これは使わなくてもできます。
-      // .children() 要素の子要素を取得します。
-      // .stop() 現在動作中のアニメーション処理を全て中止します。
+      // .children() 要素の直下の子要素を取得します。
+      //  .find() 要素の全ての子孫要素から取得。
+      // .stop() 現在動作中のアニメーション処理を全て中止します。 stop（）の場合は降りている途中でもホバーでないときアニメーションを中止する
+      //stopの他に、:not(:animated)というものがあるが、これはアニメーションがストップされるわけではなく、何回ホバーしても一回のアニメーションしかされない。
+      // $(function(){
+      //   $('.dropdwn li').hover(function(){
+      //     $("ul:not(:animated)", this).slideDown();
+      //   }, function(){
+      //   $("ul.dropdwn_menu",this).slideUp();
+      //   });
+      // });
     </script>
   </body>
 </html>
